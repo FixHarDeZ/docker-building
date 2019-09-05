@@ -3,7 +3,7 @@ version: '3'
 services:
   nodejs:
     image: fixhardez/nodejs:NODEJSBUILD
-    container_name: nodejs
+    container_name: nodejs-build
     ports:
       - 4433:4433
     restart: unless-stopped
@@ -11,7 +11,7 @@ services:
       - app-network
   webserver:
     image: fixhardez/nginxrepo:10
-    container_name: nginx
+    container_name: nginx-build
     restart: unless-stopped
     ports:
       - "80:80"

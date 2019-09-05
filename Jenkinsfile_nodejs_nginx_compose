@@ -7,9 +7,9 @@ pipeline {
   }
   
   agent any
-  
+
   stages {
-    
+
   stage('Building NodeJS image') {
       steps{
         script {
@@ -17,7 +17,7 @@ pipeline {
         }
       }
     }
-  
+
   stage('Deploy NodeJS image') {
       steps{
         script {
@@ -27,7 +27,7 @@ pipeline {
         }
       }
     }
-	
+
   stage('Start docker-compose') {
       steps{
 		  sh '''
@@ -43,6 +43,19 @@ pipeline {
 				sed "s/NODEJSBUILD/$BUILD_NUMBER/g" docker-compose.yml > docker-compose.yml.run
 				cat docker-compose.yml.run
 				docker-compose stop
+
+        if [ `docker container ps -a |grep nodejs-build |wc -l` -gt 0 ]; then
+          docker container ps -a |grep nodejs-build |awk '{print $1}' |xargs docker container rm
+        else
+          echo "Don't have remain nodejs-build container."
+        fi
+
+        if [ `docker container ps -a |grep nginx-build |wc -l` -gt 0 ]; then
+          docker container ps -a |grep nginx-build |awk '{print $1}' |xargs docker container rm
+        else
+          echo "Don't have remain nginx-build container."
+        fi
+
 				docker-compose -f docker-compose.yml.run up -d
 		  '''
             }
