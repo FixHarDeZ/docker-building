@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  nodejs:
+    image: fixhardez/nodejs:NODEJSBUILD
+    container_name: nodejs
+    ports:
+      - 4433:4433
+    restart: unless-stopped
+    networks:
+      - app-network
+  webserver:
+    image: fixhardez/nginxrepo:10
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nconf:/etc/nginx/conf.d
+    depends_on:
+      - nodejs
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

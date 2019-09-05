@@ -1,0 +1,21 @@
+pipeline {
+ environment {
+    registry = "fixhardez/compose"
+    registryCredential = 'dockerhub'
+    dockerImage = ''
+	PATH = "$PATH:/usr/local/bin"
+  }
+  
+  agent any
+  
+  stages { 
+  stage('Compose') {
+      steps{
+		  sh '''
+				mv ./nginx.conf nginxconfig
+				docker-compose -f docker-compose.yml up -d
+		  '''
+          }
+      }
+    }
+}

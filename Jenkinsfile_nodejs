@@ -1,0 +1,31 @@
+pipeline {
+ environment {
+    registry = "fixhardez/nodejs"
+    registryCredential = 'dockerhub'
+    dockerImage = ''
+  }
+  
+  agent any
+  
+  stages {
+    
+  stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build(registry + ":$BUILD_NUMBER","--build-arg BUILD_NUMBER=$BUILD_NUMBER .")
+        }
+      }
+    }
+  
+  stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+          dockerImage.push()
+          }
+        }
+      }
+    }
+
+  }
+}
